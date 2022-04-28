@@ -10,6 +10,7 @@ from django.utils.timezone import now
 # - Any other fields you would like to include in car make model
 # - __str__ method to print a car make object
 class CarMake(models.Model):
+    default_auto_field = 'django.db.models.AutoField'   # new
     name = models.CharField(null=False, max_length=30)
     description = models.CharField(null=False, max_length=200)
 
@@ -17,6 +18,7 @@ class CarMake(models.Model):
         return self.name + " " + self.description
 
 class CarModel(models.Model):
+    default_auto_field = 'django.db.models.AutoField'   # new
     name = models.CharField(null=False, max_length=200)
     make = models.ForeignKey(CarMake, null=False, on_delete=models.CASCADE)
     dealerId = models.CharField(null=False, max_length=30)
@@ -37,6 +39,12 @@ class CarModel(models.Model):
         default=SEDAN
     )    
     year = models.DateField(null=True)
+
+    def __str__(self):
+        return "Name: " + self.name + ", " + \
+               "Year: " + str(self.year) + ", " + \
+               "Type: " + self.type 
+
  
 
 
