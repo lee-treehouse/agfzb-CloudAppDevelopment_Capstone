@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 # from .restapis import related methods
-from .restapis import get_dealers_from_cf
+from .restapis import get_dealers_from_cf, get_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -101,9 +101,18 @@ def get_dealerships(request):
         # Return a list of dealer short name
         return HttpResponse(dealer_names)
 
+
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request):
+    if request.method == "GET":
+        #url = "your-cloud-function-domain/dealerships/dealer-get"
+        url = "https://16a830d1.us-south.apigw.appdomain.cloud/api/review/"
+        # Get dealers from the URL
+        dealerships = get_reviews_from_cf(url)
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+        return HttpResponse(dealer_names)
 
 
 # Create a `add_review` view to submit a review
