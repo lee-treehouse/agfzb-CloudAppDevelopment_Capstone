@@ -16,10 +16,9 @@ def get_request(url, **kwargs):
     try:
         if api_key:
         # Call get method of requests library with URL and parameters
-            response = requests.get(url, headers={'Content-Type': 'application/json'}, auth=HTTPBasicAuth('apikey', api_key))
+            response = requests.get(url, headers={'Content-Type': 'application/json'},  params=kwargs, auth=HTTPBasicAuth('apikey', api_key))
         else: 
-            response = requests.get(url, headers={'Content-Type': 'application/json'},
-                                    params=kwargs)
+            response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs)
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -35,15 +34,11 @@ def get_request(url, **kwargs):
 # def get_dealers_from_cf(url, **kwargs):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a CarDealer object list
-
-# Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
-# def get_dealer_by_id_from_cf(url, dealerId):
-# - Call get_request() with specified arguments
-# - Parse JSON results into a DealerView object list
 def get_dealers_from_cf(url, **kwargs):
     results = []
     # Call get_request with a URL parameter
-    json_result = get_request(url)
+    json_result = get_request(url, **kwargs)
+    print (json_result)
     if json_result:
         # Get the row list in JSON as dealers
         dealers = json_result["entries"]
@@ -87,7 +82,7 @@ def get_reviews_from_cf(url, **kwargs):
             review_text = review.get("review")
             sentiment = ""
             if (review_text):
-                sentiment = "everything is fine"
+                sentiment = "neutral"
                 #sentiment = analyze_review_sentiments(review_text)
 
             # Get its content in `doc` object
@@ -99,6 +94,21 @@ def get_reviews_from_cf(url, **kwargs):
             results.append(review_obj)
 
         return results
+
+def analyze_review_sentiments(text):
+    print ("I am here with " + text)
+    url = "https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/7f62941a-710d-4ef7-8799-d2b5e932110b"
+    api_key = "vq8pXV1vPJ6xpLAm70CVhO0daaMK18Ya7KGZWzE0DhUd"  
+
+    results = []
+    # Call get_request with a URL parameter
+    json_result = get_request(url=url, api_key=api_key, text=text)
+    if json_result:
+        print(json_result)
+    return "looks good"
+
+
+
 
     # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 
